@@ -1,0 +1,58 @@
+Rise of the Triad - Dingux Edition
+==================================
+Port tweaked by ingood
+
+New options
+===========
+I've added two video modes for this port. The game can be displayed in regular 
+320x200 vision or stretched, full screen mode. The stretched mode is nicer but
+there is a performance hit.
+I've adapted the "Fullscreen" option in the game menu (under EXT USER OPTIONS)
+as a toggle between these two modes. The change will take place immediately and
+will save on exit.
+
+For Users
+=========
+You will need either the shareware or full version of ROTT. Simply extract this 
+somewhere on your SD card. You'll need to put on of the following files in that same directory:
+    rottsw - For shareware version (huntbgin.wad)
+    rott - For full version (UNTESTED)
+
+Also included is an icon for use in dmenu:
+    rott.png
+
+And here's some example dmenu.cfg code:
+    MenuItem ROTT
+    {                    
+        Icon = "res/games/rott.png"
+        Name = "Rise of the Triad"                   
+        Executable = "./rottsw"
+        WorkDir = "/usr/local/rott"
+    }
+
+NOTE: You'll need to make sure that $HOME is writeable. For the moment this means
+running something like this before dmenu or rott is run.  For this example 
+you'll need to have a folder called "home" on your SD card.
+export HOME=/boot/home
+
+
+For Developers - How to compile
+===============================
+First you'll need to change the SDK_DIR variable in the Makefile to match
+the /usr directory of the toolchain. e.g. /opt/dingoo/usr
+
+If you want to compile the Shareware version you'll need to change some #defines
+in develop.h:
+
+For shareware:
+#define SHAREWARE 1
+#define SUPERROTT 0
+
+For full version:
+#define SHAREWARE 0
+#define SUPERROTT 1
+
+Todo
+====
+  - Add MIDI playback support (is timidity feasible with such limited power?)
+  - Tweak performance of fullscreen mode
