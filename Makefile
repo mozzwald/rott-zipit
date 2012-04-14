@@ -1,54 +1,17 @@
 #-----------------------------------------------------------------------------#
-# ROTT makefile.
+# ROTT for OpenWrt-Zipit Makefile.
 #-----------------------------------------------------------------------------#
 
-SDK_DIR=/opt/mipsel-linux-uclibc/usr
-#-----------------------------------------------------------------------------#
-# If this makefile fails to detect Cygwin correctly, or you want to force
-#  the build process's behaviour, set it to "true" or "false" (w/o quotes).
-#-----------------------------------------------------------------------------#
-#cygwin := true
-#cygwin := false
-cygwin := autodetect
+# Only one of the following should be enabled for the shareware
+# or full version depending on which wad file you are using
+DEFS += -DBUILD_SHAREWARE
+#DEFS += -DBUILD_FULL
 
-# you only need to set these for Cygwin at the moment.
-SDL_INC_DIR = /cygdrive/c/SDL/include
-SDL_LIB_DIR = /cygdrive/c/SDL/lib
+SDL_CFLAGS = -I$(STAGING_DIR)/usr/include/SDL
+SDL_LDFLAGS = -L$(STAGING_DIR)/usr/lib/SDL -lSDL -lSDL_mixer
 
-
-# Don't touch anything below this line unless you know what you're doing.
-
-ifeq ($(strip $(cygwin)),autodetect)
-  ifneq ($(strip $(shell gcc -v 2>&1 |grep "cygwin")),)
-    cygwin := true
-  else
-    cygwin := false
-  endif
-endif
-
-
-ifeq ($(strip $(cygwin)),true)
-  ifeq ($(strip $(SDL_INC_DIR)),please_set_me_cygwin_users)
-    $(error Cygwin users need to set the SDL_INC_DIR envr var.)
-  else
-    SDL_CFLAGS := -I$(SDL_INC_DIR)
-  endif
-
-  ifeq ($(strip $(SDL_LIB_DIR)),please_set_me_cygwin_users)
-    $(error Cygwin users need to set the SDL_LIB_DIR envr var.)
-  else
-    SDL_LDFLAGS := -L$(SDL_LIB_DIR) -lSDL
-  endif
-else
-  SDL_CFLAGS := $(shell $(SDK_DIR)/bin/sdl-config --cflags)
-  SDL_LDFLAGS := $(shell $(SDK_DIR)/bin/sdl-config --libs)
-  EXTRACFLAGS += -DUSE_EXECINFO=0
-endif
-
-
-CC = $(SDK_DIR)/bin/mipsel-linux-gcc
-CFLAGS = -g $(SDL_CFLAGS) -DUSE_SDL=1 -DPLATFORM_UNIX=1 -W -Wall -Wno-unused -Wno-pointer-sign $(EXTRACFLAGS)
-LDLIBS = $(SDL_LDFLAGS) -lSDL -lSDL_mixer $(EXTRALDFLAGS) -Wl,-E
+CFLAGS +=-g -I$(STAGING_DIR)/usr/include $(SDL_CFLAGS) -DUSE_SDL=1 -DPLATFORM_UNIX=1 $(DEFS) -W -Wall -Wno-unused -Wno-pointer-sign $(EXTRACFLAGS)
+LDLIBS +=-L$(STAGING_DIR)/usr/lib $(SDL_LDFLAGS) $(EXTRALDFLAGS) -Wl,-E
 
 all: rott
 

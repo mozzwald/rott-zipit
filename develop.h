@@ -41,8 +41,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define BNACRASHPREVENT  1 //bna added 
 // Make sure only one of the following are on at one time
-#define SHAREWARE   0
-#define SUPERROTT   1
+#ifdef BUILD_SHAREWARE
+	#define SHAREWARE   1
+#else
+	#define SHAREWARE   0
+#endif
+#ifdef BUILD_FULL
+	#define SUPERROTT	1
+else
+	#define SUPERROTT   0
+#endif
+
 #define SITELICENSE 0
 
 // cute little dopefish thing, only works with special patch?
